@@ -99,7 +99,7 @@ console.log(html);
         console.log(tag);
         const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
         /* add generated code to html variable */
-        html = html + linkHTML;
+        html = html + ' ' + linkHTML;
         console.log(html);
       
       /* END LOOP: for each tag */
