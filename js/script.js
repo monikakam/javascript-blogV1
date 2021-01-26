@@ -33,17 +33,18 @@ const optTitleSelector = '.post-title'; /* tytul artykulu czyli Artykul 1 itd */
 const optTitleListSelector = '.titles'; /*pierwotna lista linkow w html*/
 const optArticleTagsSelector = '.post-tags .list'; /*pierwotna lista tagów pod każdym artykułem*/
 const optTagsListSelector = '.tags .list';
-const optArticleAuthorsSelector = '.sidebar .authors';
+const optArticleAuthorsSelector = '.post .post-author'; /*wrapper dla autorow*/
 const optCloudClassCount = '5';
 const optCloudClassPrefix = 'tag-size- ';
 
-
+/* customSelector = '' ozancza przypisanie domyślnej wartości jeśli np. jej nie podamy*/
 function generateTitleLinks(customSelector = '') {
   
 /*remove contents of titleList usun zawartosc listy linkow w lewej kolumnie*/
 const titleList = document.querySelector(optTitleListSelector);
 titleList.innerHTML = '';
-/* find all the articles and save them to variable*/
+/* find all the articles and save them to variable - po dodaniu custom Selector funkcja wyszuka tylko te artykuły, które będą miały poszukiwany tag*/
+/* w ten sposób uzyskamy np. selektor .post[data-tags~="cat"] jeśli funkcja została wywołana z argumentem '[data~="cat"]'. Jeśli natomiast nie podano argumentu - funkcja wyszuka wszystkie artykuły czyli wszystke .post*/
 const articles = document.querySelectorAll(optArticleSelector + customSelector);
 let html = '';
 for(let article of articles) {
@@ -83,7 +84,7 @@ function calculateTagClass(count, params) {
     
     /* START LOOP: for every article: */
     for (let article of articles) {
-      /* find tags wrapper */
+      /* find tags wrapper  - miejsce gdzie maja się znalezc docelowo linki*/
       const tagsWrapper = article.querySelector(optArticleTagsSelector);
       
       /* make html variable with empty string */
@@ -119,10 +120,10 @@ function calculateTagClass(count, params) {
     /* make a new constant "href" and read the attribute "href" of the clicked element */
     const href = clickedElement.getAttribute('href');
     
-    /* make a new constant "tag" and extract tag from the "href" constant */
+    /* make a new constant "tag" and extract tag from the "href" constant czyli np. z '#tag-cat' chcemy uzyskać 'cat'; ten kod pozwoli zamienic #tag na pusty ciąg znaków*/
     const tag = href.replace('#tag-', '');
     
-    /* find all tag links with class active */
+    /* find all tag links with class active "^=" oznacza "atrybut href zaczynajacy sie od "#tag-"*/
     const tagLinks = document.querySelectorAll('a.active[href^="#tag-"]');
     
     /* START LOOP: for each active tag link */
@@ -131,7 +132,7 @@ function calculateTagClass(count, params) {
       tagLink.classList.remove('active');
     /* END LOOP: for each active tag link */
     }
-    /* find all tag links with "href" attribute equal to the "href" constant */
+    /* find all tag links with "href" attribute equal to the "href" constant - w nawiasie oznacza wszystkie linki tego samego taga*/
     document.querySelectorAll('a[href="' + href + '"]');
     /* START LOOP: for each found tag link */
     for(let tagLink of tagLinks) {
@@ -139,7 +140,8 @@ function calculateTagClass(count, params) {
       tagLink.classList.add('active');
     /* END LOOP: for each found tag link */
     }
-    /* execute function "generateTitleLinks" with article selector as argument */
+    /* execute function "generateTitleLinks" with article selector as argument - znalezienie artykulów tylko z podanym tagiem*/
+    /* `= oznacza: znajdź elementy, które mają atrybut data-tags, który ma w sobie słowo tag*/
     generateTitleLinks('[data-tags~="' + tag + '"]');
   }
   
@@ -171,10 +173,7 @@ function calculateTagClass(count, params) {
       /* get authors from data-author attribute */
       const articleAuthor = article.getAttribute('data-author');
       console.log(articleAuthor);
-      /* split tags into array */
-      /*const articleTagsArray = articleTags.split(' ');
-      console.log(articleTagsArray);*/
-      /* START LOOP: for each tag */
+      /* START LOOP: for each author */
       for(let author of articleAuthor){
         /* generate HTML of the link */
         console.log(author);
@@ -183,8 +182,7 @@ function calculateTagClass(count, params) {
         console.log(linkHTML);
         /* add generated code to html variable */
         html = html + ' ' + linkHTML;
-        console.log(html);
-      
+        console.log(html);      
       /* END LOOP: for each tag */
       }
       /* insert HTML of all the links into the authors wrapper */
@@ -204,7 +202,7 @@ function calculateTagClass(count, params) {
     /* make a new constant "href" and read the attribute "href" of the clicked element */
     const href = clickedElement.getAttribute('href');
     console.log(href);
-    /* make a new constant "tag" and extract tag from the "href" constant */
+    /* make a new constant "author" and extract author from the "href" constant */
     const author = href.replace('#author-', '');
     console.log(tag);
     /* find all author links with class active */
@@ -253,11 +251,10 @@ function calculateTagClass(count, params) {
     console.log(tag + ' is used ' + tags[tag] + ' times');
     if(tags[tag] > params.max){
     params.max = tags[tag];
-    }
-    if(tag[tag] < params.min) {
+    } else if (tag[tag] < params.min){
       params.min = tags[tag];
     }
-    }
+  }
     return params;
     }
   calculateTagsParams();
@@ -289,7 +286,7 @@ function calculateTagClass(count, params) {
        if(!allTags.hasOwnProperty(tag)){
           /* [NEW] add generated code to allTags array */
          allTags[tag] = 1;
-        } else {
+        } else { /*natomiast jeśli ten tag juz znajduje się a allTags, zwiększamy licznik wystąpień o 1*/
           allTags[tag]++;
         }
   
@@ -301,23 +298,25 @@ function calculateTagClass(count, params) {
       }
     /* [NEW] find list of tags in right column */
    const tagList = document.querySelector('.tags');
-  
+     
+   /*[NEW] create variable for all links HTML code */
    const tagsParams = calculateTagsParams(allTags);
    console.log('tagsParams:', tagsParams);
-   /*[NEW] create variable for all links HTML code */
    let allTagsHTML = '';
 
    /*[NEW] START LOOP: for each tag in allTags: */
    for(let tag in allTags){
      /*[NEW] generate code of a link and add it to allTagsHTML */
-     allTagsHTML += tagLinkHTML;
+     
      const tagLinkHTML = '<li>' + calculateTagClass(allTags[tag], tagsParams) + '</li>';
-     console.log('taglinkHTML:', tagLinkHTML);
+     allTagsHTML += tagLinkHTML;
+     console.log('tagLinkHTML:', tagLinkHTML);
    }
    /*[NEW] END LOOP: for each tag in allTags: */
 
     /* [NEW] add html from allTags to tagList */
     //tagList.innerHTML = allTags.join(' ');
+    console.log(allTags);
     tagList.innerHTML = allTagsHTML;
   }
 
