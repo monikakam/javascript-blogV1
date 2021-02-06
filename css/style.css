@@ -100,8 +100,7 @@ body {
 }
 
 .post-tags {
-  display: -ms-flexbox;
-  display: flex;
+  display: inline-block;
 }
 
 .post-tags p {
