@@ -137,7 +137,6 @@ console.log(allTags);
   const tagList = document.querySelector('.tags');
   /* [NEW] create variable for all links HTML code */
   const tagsParams = calculateTagsParams(allTags);
-  console.log('tagsParams:', tagsParams);
   //let allTagsHTML = '';
   const allTagsData = {tags: []};
   /* [NEW] START LOOP: for each tag in allTags: */
@@ -248,7 +247,6 @@ generateTags();
   generateAuthors();
 
 
- 
   function authorClickHandler(event){
     /* prevent default action for this event */
     event.preventDefault();
