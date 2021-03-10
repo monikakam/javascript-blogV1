@@ -130,7 +130,7 @@ function generateTags() {
     for (let tag of tagsArray) {
       /* generate HTML of the link */
       //const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li> ';
-      const linkHTMLData = {tagId: tag, tagTitle: tag};
+      const linkHTMLData = {id: tag, title: tag};
       const tagHTML = templates.tagLink(linkHTMLData);
       /* add generated code to html variable */
       html = html + tagHTML;
