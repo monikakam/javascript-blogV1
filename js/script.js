@@ -2,11 +2,11 @@
 
 const templates = {
   articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
-  tagLink: Handlebars.compile(document.querySelector('#template-article-tag').innerHTML),
-  authorLink: Handlebars.compile(document.querySelector('#template-article-author').innerHTML),
+  tagLink: Handlebars.compile(document.querySelector('#template-tag-link').innerHTML),
+  authorLink: Handlebars.compile(document.querySelector('#template-author-link').innerHTML),
   tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
-  authorListLink: Handlebars.compile(document.querySelector('#template-author-cloud-link').innerHTML),,
-}
+  authorListLink: Handlebars.compile(document.querySelector('#template-authors-list').innerHTML),
+};
 
 const optArticleSelector = '.post',
     optTitleSelector = '.post-title',
@@ -130,7 +130,7 @@ function generateTags() {
     for (let tag of tagsArray) {
       /* generate HTML of the link */
       //const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li> ';
-      const linkHTMLData = {id: tag, title: tag};
+      const linkHTMLData = {tagId: tag, tagTitle: tag};
       const tagHTML = templates.tagLink(linkHTMLData);
       /* add generated code to html variable */
       html = html + tagHTML;
